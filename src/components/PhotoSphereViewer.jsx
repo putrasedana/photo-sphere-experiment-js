@@ -5,7 +5,6 @@ import '@photo-sphere-viewer/core/index.css';
 import '@photo-sphere-viewer/markers-plugin/index.css';
 import '@photo-sphere-viewer/gallery-plugin/index.css';
 import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin';
-import { GalleryPlugin } from '@photo-sphere-viewer/gallery-plugin';
 
 const PhotoSphereViewer = () => {
   const viewerRef = useRef(null);
@@ -25,27 +24,6 @@ const PhotoSphereViewer = () => {
       mousewheelCtrlKey: true,
 
       plugins: [
-        [
-          GalleryPlugin,
-          {
-            items: [
-              {
-                id: 'pano-1',
-                name: 'Panorama 1',
-                panorama:
-                  'https://upload.wikimedia.org/wikipedia/commons/f/f0/Colonia_Ulpia_Traiana_-_Rekonstruktion_römischer_Schiffe-0010560.jpg',
-                thumbnail:
-                  'https://upload.wikimedia.org/wikipedia/commons/f/f0/Colonia_Ulpia_Traiana_-_Rekonstruktion_römischer_Schiffe-0010560.jpg',
-              },
-              {
-                id: 'pano-2',
-                name: 'Panorama 2',
-                panorama: baseUrl + 'sphere.jpg',
-                thumbnail: baseUrl + 'sphere.jpg',
-              },
-            ],
-          },
-        ],
         [
           MarkersPlugin,
           {
