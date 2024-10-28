@@ -1,16 +1,76 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import '@photo-sphere-viewer/core/index.css';
 import '@photo-sphere-viewer/markers-plugin/index.css';
-import '@photo-sphere-viewer/gallery-plugin/index.css';
+import '@photo-sphere-viewer/compass-plugin/index.css';
 import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin';
+import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
 
 const PhotoSphereViewer = () => {
   const viewerRef = useRef(null);
   const gunungRef = useRef(null);
   const batuRef = useRef(null);
   const baseUrl = 'https://photo-sphere-viewer-data.netlify.app/assets/';
+  const markersPluginRef = useRef(null);
+
+  const [areAllTooltipsVisible, setAllTooltipsVisible] = useState(false);
+  const markerIcon = `
+        <div style="
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 60px; 
+            height: 80px; 
+            position: relative;">
+            <div style="
+                width: 40px; 
+                height: 40px; 
+                background-color: #00808F; 
+                border-radius: 30%; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                color: white;">
+                <!-- SVG icon -->
+                <svg width="23" height="25" viewBox="0 0 23 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.6942 22.9167H20.6612V21.875C20.6612 21.25 20.2479 20.8333 19.6281 20.8333H18.595V10.4167H20.6612L22.7273 6.25C20.6612 6.45833 18.595 6.45833 16.5289 6.25C14.876 5 13.6364 3.75 12.3967 2.08333V1.04167C12.3967 0.416667 11.9835 0 11.3636 0C10.7438 0 10.3306 0.416667 10.3306 1.04167V2.08333C9.09091 3.75 7.85124 5 6.19835 6.25C4.13223 6.45833 2.06612 6.45833 0 6.25L2.06612 10.4167H4.13223V20.8333H3.09917C2.47934 20.8333 2.06612 21.25 2.06612 21.875V22.9167H1.03306C0.413223 22.9167 0 23.3333 0 23.9583V25H22.7273V23.9583C22.7273 23.3333 22.314 22.9167 21.6942 22.9167ZM10.3306 20.8333H6.19835V10.4167H10.3306V20.8333ZM16.5289 20.8333H12.3967V10.4167H16.5289V20.8333Z" fill="white"/>
+                </svg>
+            </div>
+            <div style="
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #00808F;
+            "></div>
+            <div style="
+                width: 1px; 
+                height: 30px; 
+                background-color: #FFF; 
+                margin-top: 2px;">
+            </div>
+            <div style="
+                width: 8px; 
+                height: 8px; 
+                background-color: #fff ; 
+                border-radius: 50%; 
+                position: absolute; 
+                bottom: 0;"
+                >
+            </div>
+        </div>
+    `;
+
+  const customContent = `
+    <div style="margin-bottom: 10px; width: 25px; height: 25px;">
+      <svg viewBox="-2 -2 29 29" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12.5" cy="12.5" r="12.5" fill="gray" />
+      <circle cx="12.5" cy="12.5" r="12.5" fill="none" stroke="white" stroke-width="1" />
+      <text x="12.5" y="19" font-family="Arial" font-size="18" text-anchor="middle" fill="white">i</text>
+      </svg>
+    </div>
+  `;
 
   useEffect(() => {
     if (!viewerRef.current) return;
@@ -22,21 +82,74 @@ const PhotoSphereViewer = () => {
       loadingImg: baseUrl + 'loader.gif',
       touchmoveTwoFingers: true,
       mousewheelCtrlKey: true,
+      sphereCorrection: {
+        pan: '0deg',
+      },
+
+      navbar: [
+        'autorotate',
+        'zoom',
+        'move',
+        'download',
+        'description',
+        {
+          id: 'change',
+          title: 'Tooltips',
+          tabbable: true,
+          visible: true,
+          content: customContent,
+          onClick(viewer) {
+            const markersPlugin = markersPluginRef.current;
+            if (markersPlugin) {
+              setAllTooltipsVisible((prevState) => {
+                markersPlugin.getMarkers().forEach((marker) => {
+                  if (prevState) {
+                    markersPlugin.hideMarkerTooltip(marker.id);
+                  } else {
+                    markersPlugin.showMarkerTooltip(marker.id);
+                  }
+                });
+                return !prevState;
+              });
+            }
+          },
+        },
+        'markers',
+        'markersList',
+        'caption',
+        'fullscreen',
+      ],
 
       plugins: [
+        [
+          CompassPlugin,
+          {
+            size: '5rem',
+            backgroundSvg: `
+              <svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="250" cy="250" r="250" fill="gray" /> 
+              </svg>
+            `,
+          },
+        ],
         [
           MarkersPlugin,
           {
             markers: [
               {
                 id: 'image',
-                position: { yaw: 0.04, pitch: -0.05 },
-                image: baseUrl + 'pictos/pin-blue.png',
+                position: { yaw: 0.02, pitch: 0.01 },
+                // image: baseUrl + 'pictos/pin-blue.png',
+                html: markerIcon,
                 size: { width: 32, height: 32 },
                 anchor: 'bottom center',
                 zoomLvl: 100,
-                tooltip: 'Ini batu?',
+                tooltip: {
+                  content: 'This is marker',
+                  position: 'top center',
+                },
                 content: batuRef.current?.innerHTML,
+                data: { compass: '#0000ff' },
               },
               {
                 id: 'image2',
@@ -47,6 +160,7 @@ const PhotoSphereViewer = () => {
                 zoomLvl: 100,
                 tooltip: 'Ini gunung?',
                 content: gunungRef.current?.innerHTML,
+                data: { compass: '#ff0000' },
               },
             ],
           },
@@ -62,49 +176,16 @@ const PhotoSphereViewer = () => {
     });
 
     const markersPlugin = viewer.getPlugin(MarkersPlugin);
-
-    const handleClick = (data) => {
-      if (!data.rightclick) {
-        markersPlugin.addMarker({
-          id: '#' + Math.random(),
-          position: { yaw: data.yaw, pitch: data.pitch },
-          image: baseUrl + 'pictos/pin-red.png',
-          size: { width: 32, height: 32 },
-          anchor: 'bottom center',
-          tooltip: 'Generated pin',
-          data: {
-            generated: true,
-          },
-        });
-      }
-    };
-
-    const handleMarkerSelect = (marker) => {
-      if (marker.data?.generated) {
-        if (marker.doubleClick) {
-          markersPlugin.removeMarker(marker);
-        } else if (marker.rightClick) {
-          markersPlugin.updateMarker({
-            id: marker.id,
-            image: baseUrl + 'pictos/pin-blue.png',
-          });
-        }
-      }
-    };
-
-    viewer.addEventListener('click', handleClick);
-    markersPlugin.addEventListener('select-marker', handleMarkerSelect);
+    markersPluginRef.current = markersPlugin;
 
     return () => {
-      viewer.removeEventListener('click', handleClick);
-      markersPlugin.removeEventListener('select-marker', handleMarkerSelect);
       viewer.destroy();
     };
   }, []);
 
   return (
     <div>
-      <div ref={viewerRef} style={{ height: '700px' }}>
+      <div ref={viewerRef} style={{ height: '30rem' }}>
         <div id="gunung-content" ref={gunungRef} style={{ display: 'none' }}>
           <h1>Yoi, benar gunung</h1>
           <p>
