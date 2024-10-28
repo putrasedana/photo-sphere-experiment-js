@@ -185,7 +185,7 @@ const PhotoSphereViewer = () => {
 
   return (
     <div>
-      <div ref={viewerRef} style={{ height: '30rem' }}>
+      <div ref={viewerRef} style={{ height: '700px' }}>
         <div id="gunung-content" ref={gunungRef} style={{ display: 'none' }}>
           <h1>Yoi, benar gunung</h1>
           <p>
