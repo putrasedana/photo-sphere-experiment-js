@@ -143,8 +143,7 @@ const PhotoSphereViewer = () => {
             markers: [
               {
                 id: 'image',
-                position: { yaw: 0.04, pitch: -0.08 },
-                // image: baseUrl + 'pictos/pin-blue.png',
+                position: { yaw: -0.13, pitch: -0.08 },
                 html: markerContent,
                 size: { width: 80, height: 80 },
                 anchor: 'bottom center',
@@ -159,8 +158,8 @@ const PhotoSphereViewer = () => {
               {
                 id: 'image2',
                 position: { yaw: -0.15, pitch: 0.18 },
-                image: baseUrl + 'pictos/pin-red.png',
-                size: { width: 50, height: 50 },
+                html: markerContent,
+                size: { width: 80, height: 80 },
                 anchor: 'bottom center',
                 zoomLvl: 100,
                 tooltip: 'Ini gunung?',
@@ -190,7 +189,7 @@ const PhotoSphereViewer = () => {
 
   return (
     <div>
-      <div ref={viewerRef} style={{ height: '500px' }}>
+      <div ref={viewerRef} style={{ height: '100vh' }}>
         <div id="gunung-content" ref={gunungRef} style={{ display: 'none' }}>
           <h1>Yoi, benar gunung</h1>
           <p>
