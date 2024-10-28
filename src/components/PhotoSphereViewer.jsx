@@ -138,7 +138,7 @@ const PhotoSphereViewer = () => {
             markers: [
               {
                 id: 'image',
-                position: { yaw: 0.02, pitch: 0.01 },
+                position: { yaw: 0.02, pitch: -0.02 },
                 // image: baseUrl + 'pictos/pin-blue.png',
                 html: markerIcon,
                 size: { width: 32, height: 32 },
